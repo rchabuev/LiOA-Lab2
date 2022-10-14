@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <Windows.h>
+
+int compare(const void* x1, const void* x2)   // функция сравнения элементов массива
+{
+	return (*(int*)x1 - *(int*)x2);              // если результат вычитания равен 0, то числа равны, < 0: x1 < x2; > 0: x1 > x2
+}
+
+int main(void)
+{
+	SetConsoleOutputCP(1251);
+	int ns;
+	printf("Введите размер массива:");
+	scanf_s("%d", &ns);
+	int* A = (int*)malloc(ns * sizeof(int));
+	for (int i = 0, k = 0; i < ns/2; i++, k += 1) {
+		A[i] = k;
+	}
+	for (int i = ns/2, k = ns; i < ns; i++, k -= 1) {
+		A[i] = k;
+	}
+	clock_t start, end; // объявляем переменные для определения времени выполнения
+	start = clock();
+	qsort(A, ns, sizeof(int), compare);
+	end = clock();
+	double time = 0.0;
+	time += (double)(end - start) / CLOCKS_PER_SEC;
+	printf("Размер массива: %d\n", ns);
+	printf("Время работы: %lf в секундах", time);
+	return 0;
+}
