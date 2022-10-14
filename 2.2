@@ -1,0 +1,218 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <Windows.h>
+
+void shell(int* items, int count)
+{
+
+    int i, j, gap, k;
+    int x, a[5];
+
+    a[0] = 9; a[1] = 5; a[2] = 3; a[3] = 2; a[4] = 1;
+
+    for (k = 0; k < 5; k++) {
+        gap = a[k];
+        for (i = gap; i < count; ++i) {
+            x = items[i];
+            for (j = i - gap; (x < items[j]) && (j >= 0); j = j - gap)
+                items[j + gap] = items[j];
+            items[j + gap] = x;
+        }
+    }
+}
+
+void qs(int* items, int left, int right) //вызов функции: qs(items, 0, count-1);
+{
+    int i, j;
+    int x, y;
+
+    i = left; j = right;
+
+    /* выбор компаранда */
+    x = items[(left + right) / 2];
+
+    do {
+        while ((items[i] < x) && (i < right)) i++;
+        while ((x < items[j]) && (j > left)) j--;
+
+        if (i <= j) {
+            y = items[i];
+            items[i] = items[j];
+            items[j] = y;
+            i++; j--;
+        }
+    } while (i <= j);
+
+    if (left < j) qs(items, left, j);
+    if (i < right) qs(items, i, right);
+}
+
+void shell1(int* items1, int count)
+{
+
+    int i, j, gap, k;
+    int x, a[5];
+
+    a[0] = 9; a[1] = 5; a[2] = 3; a[3] = 2; a[4] = 1;
+
+    for (k = 0; k < 5; k++) {
+        gap = a[k];
+        for (i = gap; i < count; ++i) {
+            x = items1[i];
+            for (j = i - gap; (x < items1[j]) && (j >= 0); j = j - gap)
+                items1[j + gap] = items1[j];
+            items1[j + gap] = x;
+        }
+    }
+}
+
+int compare(const void* x1, const void* x2)   // функция сравнения элементов массива
+{
+    return (*(int*)x1 - *(int*)x2);              // если результат вычитания равен 0, то числа равны, < 0: x1 < x2; > 0: x1 > x2
+}
+
+void create(int* items, int ns)
+{
+    for (int i = 0; i < ns; i++) {
+        items[i] = rand();
+    }
+}
+
+void create2(int* items, int ns)
+{
+    for (int i = 0, k = 0; i < ns; i++, k += 10) {
+        items[i] = k;
+    }
+}
+
+void create3(int* items, int ns)
+{
+    for (int i = 0, k = 100000; i < ns; i++, k -= 10) {
+        items[i] = k;
+    }
+}
+
+void create4(int* items, int ns)
+{
+    for (int i = 0, k = 0; i < ns / 2; i++, k += 1) {
+        items[i] = k;
+    }
+    for (int i = ns / 2, k = ns; i < ns; i++, k -= 1) {
+        items[i] = k;
+    }
+}
+
+int main(void)
+{
+    SetConsoleOutputCP(1251);
+    clock_t start, end, start1, end1, start2, end2;
+    int items1[100000];
+    srand(time(NULL));
+    for (int i = 0; i < 100000; i++)
+    {
+        items1[i] = rand();
+    }
+    printf("Введите размер массива:");
+    int ns;
+    scanf_s("%d", &ns);
+    int* items = (int*)malloc(ns * sizeof(int));
+
+
+    create(items, ns);
+    start = clock();
+    shell1(items1, 100000);
+    shell(items, ns);
+    end = clock();
+    create(items, ns);
+    start1 = clock();
+    shell1(items1, 100000);
+    qs(items, 0, ns);
+    end1 = clock();
+    create(items, ns);
+    start2 = clock();
+    shell1(items1, 100000);
+    qsort(items, ns, sizeof(int), compare);
+    end2 = clock();
+    double time = 0.0;
+    double time1 = 0.0;
+    double time2 = 0.0;
+    time += (double)(end - start) / CLOCKS_PER_SEC;
+    time1 += (double)(end1 - start1) / CLOCKS_PER_SEC;
+    time2 += (double)(end2 - start2) / CLOCKS_PER_SEC;
+
+
+    create2(items, ns);
+    start = clock();
+    shell1(items1, 100000);
+    shell(items, ns);
+    end = clock();
+    create2(items, ns);
+    start1 = clock();
+    shell1(items1, 100000);
+    qs(items, 0, ns);
+    end1 = clock();
+    create2(items, ns);
+    start2 = clock();
+    shell1(items1, 100000);
+    qsort(items, ns, sizeof(int), compare);
+    end2 = clock();
+    double time3 = 0.0;
+    double time4 = 0.0;
+    double time5 = 0.0;
+    time3 += (double)(end - start) / CLOCKS_PER_SEC;
+    time4 += (double)(end1 - start1) / CLOCKS_PER_SEC;
+    time5 += (double)(end2 - start2) / CLOCKS_PER_SEC;
+
+
+    create3(items, ns);
+    start = clock();
+    shell1(items1, 100000);
+    shell(items, ns);
+    end = clock();
+    create3(items, ns);
+    start1 = clock();
+    shell1(items1, 100000);
+    qs(items, 0, ns);
+    end1 = clock();
+    create3(items, ns);
+    start2 = clock();
+    shell1(items1, 100000);
+    qsort(items, ns, sizeof(int), compare);
+    end2 = clock();
+    create3(items, ns);
+    double time6 = 0.0;
+    double time7 = 0.0;
+    double time8 = 0.0;
+    time6 += (double)(end - start) / CLOCKS_PER_SEC;
+    time7 += (double)(end1 - start1) / CLOCKS_PER_SEC;
+    time8 += (double)(end2 - start2) / CLOCKS_PER_SEC;
+
+    create4(items, ns);
+    start = clock();
+    shell1(items1, 100000);
+    shell(items, ns);
+    end = clock();
+    create4(items, ns);
+    start1 = clock();
+    shell1(items1, 100000);
+    qs(items, 0, ns);
+    end1 = clock();
+    create4(items, ns);
+    start2 = clock();
+    shell1(items1, 100000);
+    qsort(items, ns, sizeof(int), compare);
+    end2 = clock();
+    double time9 = 0.0;
+    double time10 = 0.0;
+    double time11 = 0.0;
+    time9 += (double)(end - start) / CLOCKS_PER_SEC;
+    time10 += (double)(end1 - start1) / CLOCKS_PER_SEC;
+    time11 += (double)(end2 - start2) / CLOCKS_PER_SEC;
+    printf("Размер массива: %d\n", ns);
+    printf("                     |Рандомные числа|               |/|                      |\\|                      |/\\|\n");
+    printf("Время работы shell: %lf в секундах      %lf в секундах      %lf в секундах      %lf в секундах\n", time, time3, time6, time9);
+    printf("Время работы qs   : %lf в секундах      %lf в секундах      %lf в секундах      %lf в секундах\n", time1, time4, time7, time10);
+    printf("Время работы qsort: %lf в секундах      %lf в секундах      %lf в секундах      %lf в секундах\n", time2, time5, time8, time11);
+    return 0;
+}
